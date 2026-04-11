@@ -74,7 +74,7 @@ This project is a collaboration between **Maciej Drahusz** (Founder of "Code & H
 | Role | Name | GitHub |
 |------|------|--------|
 | Collaborator (Founder) | Maciej Drahusz | [@mrMagic-web](https://github.com/mrMagic-web) |
-| Lead Developer | Azizbek Abdullayev | — |
+| Lead Developer | Azizbek Abdullayev | [@Azizbek432](https://github.com/Azizbek432) |
 
 ---
 
