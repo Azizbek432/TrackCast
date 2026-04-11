@@ -34,7 +34,7 @@ The primary goal is to build a stable Minimum Viable Product (MVP) that records 
  /components        # UI elements: Speedometer, MapView, ChannelLogo
  /features          # Logic: useLocationTracker.ts, trackingStore.ts
  /screens           # Pages: Home, Recording, History
- /utils            # Auxiliary functions: Speed ​​formatting, Geo-logic
+ /utils             # Auxiliary functions: Speed ​​formatting, Geo-logic
 ```
 
 ---
