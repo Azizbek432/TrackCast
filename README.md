@@ -31,10 +31,10 @@ The primary goal is to build a stable Minimum Viable Product (MVP) that records 
 
 ```text
 /src
-  /components      # UI elementlar: Speedometer, MapView, ChannelLogo
-  /features        # Mantiq: useLocationTracker.ts, trackingStore.ts
-  /screens         # Sahifalar: Home, Recording, History
-  /utils           # Yordamchi funksiyalar: Speed formatting, Geo-logic
+ /components        # UI elements: Speedometer, MapView, ChannelLogo
+ /features          # Logic: useLocationTracker.ts, trackingStore.ts
+ /screens           # Pages: Home, Recording, History
+ /utils            # Auxiliary functions: Speed ​​formatting, Geo-logic
 ```
 
 ---
