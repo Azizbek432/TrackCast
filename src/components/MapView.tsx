@@ -13,7 +13,7 @@ export const MapComponent = ({ location }: MapProps) => {
   return (
     <View style={styles.container}>
       <MapView
-        provider={PROVIDER_GOOGLE}
+        // provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
           latitude: location.coords.latitude,
@@ -34,6 +34,7 @@ export const MapComponent = ({ location }: MapProps) => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           }}
+          tracksViewChanges={false}
         >
           <Image
             source={require("../../assets/location-pin.png")}
