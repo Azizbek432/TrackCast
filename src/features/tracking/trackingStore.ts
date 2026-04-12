@@ -2,20 +2,41 @@ import { create } from "zustand";
 
 interface TrackingState {
   isRecording: boolean;
-  currentSpeed: number;
   distance: number;
-  duration: number;
+  prevCoords: { latitude: number; longitude: number } | null;
   startRecording: () => void;
   stopRecording: () => void;
-  updateSpeed: (speed: number) => void;
+  updateLocation: (lat: number, lon: number) => void;
 }
 
-export const useTrackingStore = create<TrackingState>((set) => ({
+export const useTrackingStore = create<TrackingState>((set, get) => ({
   isRecording: false,
-  currentSpeed: 0,
   distance: 0,
-  duration: 0,
-  startRecording: () => set({ isRecording: true, distance: 0, duration: 0 }),
+  prevCoords: null,
+
+  startRecording: () =>
+    set({ isRecording: true, distance: 0, prevCoords: null }),
   stopRecording: () => set({ isRecording: false }),
-  updateSpeed: (speed) => set({ currentSpeed: speed }),
+
+  updateLocation: (lat, lon) => {
+    const { isRecording, prevCoords, distance } = get();
+    if (!isRecording) return;
+
+    if (prevCoords) {
+      const R = 6371e3;
+      const f1 = (prevCoords.latitude * Math.PI) / 180;
+      const f2 = (lat * Math.PI) / 180;
+      const df = ((lat - prevCoords.latitude) * Math.PI) / 180;
+      const dl = ((lon - prevCoords.longitude) * Math.PI) / 180;
+
+      const a =
+        Math.sin(df / 2) * Math.sin(df / 2) +
+        Math.cos(f1) * Math.cos(f2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      const newDistance = R * c;
+      set({ distance: distance + newDistance });
+    }
+    set({ prevCoords: { latitude: lat, longitude: lon } });
+  },
 }));
