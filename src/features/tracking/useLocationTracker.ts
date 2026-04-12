@@ -11,28 +11,28 @@ export const useLocationTracker = () => {
     let subscription: Location.LocationSubscription | null = null;
 
     (async () => {
-      // 1. Ruxsat so'rash
+      // 1. Requesting permissions
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Joylashuvga ruxsat berilmadi!");
+        setErrorMsg("Permission to access location was denied");
         return;
       }
 
-      // 2. Real vaqtda kuzatish (Subscription)
-      // Bu funksiya har safar joylashuv o'zgarganda ishlaydi
+      // 2. Real-time Subscription
+      // This function executes every time the location changes
       subscription = await Location.watchPositionAsync(
         {
-          accuracy: Location.Accuracy.BestForNavigation, // Eng yuqori aniqlik
-          timeInterval: 1000, // Har 1 soniyada yangilash
-          distanceInterval: 1, // Har 1 metr harakatlanganda yangilash
+          accuracy: Location.Accuracy.BestForNavigation, // Highest precision
+          timeInterval: 1000, // Update every 1 second
+          distanceInterval: 1, // Update every 1 meter
         },
         (newLocation) => {
-          setLocation(newLocation); // Ma'lumotni yangilaymiz
+          setLocation(newLocation); // Updating the state
         },
       );
     })();
 
-    // 3. Tozalash (Cleanup) - component o'chganda kuzatishni to'xtatish
+    // 3. Cleanup - stop tracking when component unmounts
     return () => {
       if (subscription) {
         subscription.remove();
