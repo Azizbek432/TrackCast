@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -10,6 +10,7 @@ import {
 import { useLocationTracker } from "../features/tracking/useLocationTracker";
 import { useTrackingStore } from "../features/tracking/trackingStore";
 import { Loader } from "../components/Loader";
+import { MapComponent } from "../components/MapComponent";
 
 export const HomeScreen = () => {
   const { location, errorMsg } = useLocationTracker();
@@ -21,6 +22,8 @@ export const HomeScreen = () => {
     stopRecording,
   } = useTrackingStore();
 
+  const [showMap, setShowMap] = useState(false);
+
   useEffect(() => {
     if (location && isRecording) {
       updateLocation(location.coords.latitude, location.coords.longitude);
@@ -30,50 +33,56 @@ export const HomeScreen = () => {
   if (!location && !errorMsg) {
     return <Loader />;
   }
+
   const speedMs = location?.coords.speed ?? 0;
   const speedKmh = Math.max(0, speedMs * 3.6).toFixed(1);
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-
       <View style={styles.header}>
-        <Text style={styles.brand}>TRACKCAST</Text>
+        <Text style={styles.brand}>{showMap ? "MAP VIEW" : "TRACKCAST"}</Text>
         <Image
-          source={require("../../assets/speedometer.png")}
+          source={require("../../assets/TrackCast_logo.png")}
           style={styles.logoIcon}
         />
       </View>
-
       {errorMsg ? (
         <Text style={styles.errorText}>{errorMsg}</Text>
       ) : (
         <View style={styles.mainVisual}>
-          <Image
-            source={require("../../assets/speedometer.png")}
-            style={[styles.speedBg, { opacity: 0.2 }]}
-          />
+          {showMap ? (
+            <MapComponent location={location} />
+          ) : (
+            <>
+              <Image
+                source={require("../../assets/speedometer.png")}
+                style={[styles.speedBg, { opacity: 0.2 }]}
+              />
+              <View style={styles.speedTextContainer}>
+                <Text style={styles.speedValue}>{speedKmh}</Text>
+                <Text style={styles.unit}>km/h</Text>
+              </View>
 
-          <View style={styles.speedTextContainer}>
-            <Text style={styles.speedValue}>{speedKmh}</Text>
-            <Text style={styles.unit}>km/h</Text>
-          </View>
-
-          <View style={styles.distanceContainer}>
-            <Text style={styles.distanceLabel}>DISTANCE</Text>
-            <Text style={styles.distanceValue}>
-              {(distance / 1000).toFixed(2)}{" "}
-              <Text style={styles.distUnit}>km</Text>
-            </Text>
-          </View>
+              <View style={styles.distanceContainer}>
+                <Text style={styles.distanceLabel}>DISTANCE</Text>
+                <Text style={styles.distanceValue}>
+                  {(distance / 1000).toFixed(2)}{" "}
+                  <Text style={styles.distUnit}>km</Text>
+                </Text>
+              </View>
+            </>
+          )}
         </View>
       )}
-
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.mapBtn}>
+        <TouchableOpacity
+          style={[styles.mapBtn, showMap && { backgroundColor: "#00ff00" }]}
+          onPress={() => setShowMap(!showMap)}
+        >
           <Image
             source={require("../../assets/location-pin.png")}
-            style={styles.smallIcon}
+            style={[styles.smallIcon, showMap && { tintColor: "#000" }]}
           />
         </TouchableOpacity>
 
@@ -104,6 +113,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 20,
   },
   brand: {
     color: "#fff",
@@ -112,13 +122,17 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   logoIcon: {
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    resizeMode: "contain",
   },
   mainVisual: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginVertical: 20,
+    width: "100%",
   },
   speedBg: {
     position: "absolute",

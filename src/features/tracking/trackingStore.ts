@@ -3,6 +3,7 @@ import { create } from "zustand";
 interface TrackingState {
   isRecording: boolean;
   distance: number;
+  route: Array<{ latitude: number; longitude: number }>;
   prevCoords: { latitude: number; longitude: number } | null;
   startRecording: () => void;
   stopRecording: () => void;
@@ -12,15 +13,19 @@ interface TrackingState {
 export const useTrackingStore = create<TrackingState>((set, get) => ({
   isRecording: false,
   distance: 0,
+  route: [],
   prevCoords: null,
 
   startRecording: () =>
-    set({ isRecording: true, distance: 0, prevCoords: null }),
+    set({ isRecording: true, distance: 0, route: [], prevCoords: null }),
+
   stopRecording: () => set({ isRecording: false }),
 
   updateLocation: (lat, lon) => {
-    const { isRecording, prevCoords, distance } = get();
+    const { isRecording, prevCoords, distance, route } = get();
     if (!isRecording) return;
+
+    const newCoord = { latitude: lat, longitude: lon };
 
     if (prevCoords) {
       const R = 6371e3;
@@ -35,8 +40,17 @@ export const useTrackingStore = create<TrackingState>((set, get) => ({
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
       const newDistance = R * c;
-      set({ distance: distance + newDistance });
+
+      set({
+        distance: distance + newDistance,
+        route: [...route, newCoord],
+        prevCoords: newCoord,
+      });
+    } else {
+      set({
+        prevCoords: newCoord,
+        route: [newCoord],
+      });
     }
-    set({ prevCoords: { latitude: lat, longitude: lon } });
   },
 }));
