@@ -31,9 +31,9 @@
       "package": "com.azizbek.trackcast",
       "versionCode": 1,
       "permissions": [
+        "CAMERA",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "CAMERA",
         "FOREGROUND_SERVICE"
       ],
       "adaptiveIcon": {
