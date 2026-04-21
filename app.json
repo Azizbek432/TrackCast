@@ -12,13 +12,27 @@
       "backgroundColor": "#000000"
     },
     "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow TrackCast to use the camera for AR HUD.",
+          "recordAudioPermission": "Allow TrackCast to record audio."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow TrackCast to use your location for speed tracking."
+        }
+      ]
+    ],
     "android": {
       "package": "com.azizbek.trackcast",
       "versionCode": 1,
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
         "CAMERA",
         "FOREGROUND_SERVICE"
       ],
