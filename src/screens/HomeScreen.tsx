@@ -39,9 +39,12 @@ export const HomeScreen = () => {
   const handleRecordPress = async () => {
     if (!isRecording) {
       const { status } = await requestPermission();
-      if (status === "granted") startRecording();
+      if (status === "granted") {
+        startRecording();
+      }
     } else {
       stopRecording();
+      useTrackingStore.getState().saveSession();
     }
   };
 
@@ -64,12 +67,14 @@ export const HomeScreen = () => {
           <Text style={styles.brand}>
             {isRecording ? "LIVE TRACKING" : "TRACKCAST"}
           </Text>
-          <Image
-            source={require("../../assets/TrackCast_logo.png")}
-            style={styles.logoIcon}
-          />
-        </View>
 
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../assets/TrackCast_logo.png")}
+              style={styles.logoIcon}
+            />
+          </View>
+        </View>
         <View style={styles.mainVisual}>
           <View style={styles.speedTextContainer}>
             <Text
@@ -135,7 +140,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   brand: { color: "#fff", fontSize: 22, fontWeight: "900", letterSpacing: 2 },
-  logoIcon: { width: 45, height: 45, borderRadius: 12 },
+  logoContainer: {
+    width: 55,
+    height: 55,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  logoIcon: {
+    width: "90%",
+    height: "90%",
+    resizeMode: "contain",
+  },
   mainVisual: { flex: 1, alignItems: "center", justifyContent: "center" },
   speedTextContainer: { alignItems: "center", marginBottom: 40 },
   speedValue: { color: "#fff", fontSize: 110, fontWeight: "bold" },

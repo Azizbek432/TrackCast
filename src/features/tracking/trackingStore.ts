@@ -1,13 +1,22 @@
 import { create } from "zustand";
 
+interface Session {
+  id: string;
+  date: string;
+  distance: string;
+  avgSpeed: string;
+}
+
 interface TrackingState {
   isRecording: boolean;
   distance: number;
   route: Array<{ latitude: number; longitude: number }>;
   prevCoords: { latitude: number; longitude: number } | null;
+  history: Session[];
   startRecording: () => void;
   stopRecording: () => void;
   updateLocation: (lat: number, lon: number) => void;
+  saveSession: () => void;
 }
 
 export const useTrackingStore = create<TrackingState>((set, get) => ({
@@ -15,11 +24,25 @@ export const useTrackingStore = create<TrackingState>((set, get) => ({
   distance: 0,
   route: [],
   prevCoords: null,
+  history: [],
 
   startRecording: () =>
     set({ isRecording: true, distance: 0, route: [], prevCoords: null }),
 
   stopRecording: () => set({ isRecording: false }),
+
+  saveSession: () => {
+    const { distance, isRecording, history } = get();
+    if (!isRecording && distance > 0) {
+      const newSession: Session = {
+        id: Date.now().toString(),
+        date: new Date().toLocaleDateString(),
+        distance: (distance / 1000).toFixed(2),
+        avgSpeed: "12.5",
+      };
+      set({ history: [newSession, ...history] });
+    }
+  },
 
   updateLocation: (lat, lon) => {
     const { isRecording, prevCoords, distance, route } = get();
@@ -38,7 +61,6 @@ export const useTrackingStore = create<TrackingState>((set, get) => ({
         Math.sin(df / 2) * Math.sin(df / 2) +
         Math.cos(f1) * Math.cos(f2) * Math.sin(dl / 2) * Math.sin(dl / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
       const newDistance = R * c;
 
       set({
