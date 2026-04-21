@@ -1,44 +1,45 @@
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
+import { useTrackingStore } from "./trackingStore";
 
 export const useLocationTracker = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null,
-  );
+  const { isRecording, updateLocation } = useTrackingStore();
 
   useEffect(() => {
     let subscription: Location.LocationSubscription | null = null;
 
     (async () => {
-      // 1. Requesting permissions
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
       }
 
-      // 2. Real-time Subscription
-      // This function executes every time the location changes
       subscription = await Location.watchPositionAsync(
         {
-          accuracy: Location.Accuracy.BestForNavigation, // Highest precision
-          timeInterval: 1000, // Update every 1 second
-          distanceInterval: 1, // Update every 1 meter
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeInterval: 1000,
+          distanceInterval: 1,
         },
         (newLocation) => {
-          setLocation(newLocation); // Updating the state
+          if (isRecording) {
+            updateLocation(
+              newLocation.coords.latitude,
+              newLocation.coords.longitude,
+              newLocation.coords.speed || 0,
+            );
+          }
         },
       );
     })();
 
-    // 3. Cleanup - stop tracking when component unmounts
     return () => {
       if (subscription) {
         subscription.remove();
       }
     };
-  }, []);
+  }, [isRecording]);
 
-  return { location, errorMsg };
+  return { errorMsg };
 };

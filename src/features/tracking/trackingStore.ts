@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import db from "../../database/db";
 
 interface Session {
   id: string;
@@ -9,45 +10,79 @@ interface Session {
 
 interface TrackingState {
   isRecording: boolean;
+  speed: number;
   distance: number;
   route: Array<{ latitude: number; longitude: number }>;
   prevCoords: { latitude: number; longitude: number } | null;
   history: Session[];
+  startTime: number | null;
   startRecording: () => void;
   stopRecording: () => void;
-  updateLocation: (lat: number, lon: number) => void;
+  updateLocation: (lat: number, lon: number, currentSpeed?: number) => void;
   saveSession: () => void;
 }
 
 export const useTrackingStore = create<TrackingState>((set, get) => ({
   isRecording: false,
+  speed: 0,
   distance: 0,
   route: [],
   prevCoords: null,
   history: [],
+  startTime: null,
 
   startRecording: () =>
-    set({ isRecording: true, distance: 0, route: [], prevCoords: null }),
+    set({
+      isRecording: true,
+      speed: 0,
+      distance: 0,
+      route: [],
+      prevCoords: null,
+      startTime: Date.now(),
+    }),
 
-  stopRecording: () => set({ isRecording: false }),
+  stopRecording: () => set({ isRecording: false, speed: 0 }),
 
   saveSession: () => {
-    const { distance, isRecording, history } = get();
-    if (!isRecording && distance > 0) {
+    const { distance, isRecording, startTime, history } = get();
+
+    if (!isRecording && distance > 0 && startTime) {
+      const durationInHours = (Date.now() - startTime) / 3600000;
+      const calculatedAvgSpeed = (distance / 1000 / durationInHours).toFixed(1);
+      const distKm = (distance / 1000).toFixed(2);
+      const dateStr = new Date().toLocaleDateString();
+
+      try {
+        db.runSync(
+          `INSERT INTO trips (date, distance, avgSpeed, maxSpeed) VALUES (?, ?, ?, ?);`,
+          [dateStr, distKm, calculatedAvgSpeed, calculatedAvgSpeed],
+        );
+        console.log("Trip saved to SQLite! ✅");
+      } catch (e) {
+        console.error("DB Save Error:", e);
+      }
+
       const newSession: Session = {
         id: Date.now().toString(),
-        date: new Date().toLocaleDateString(),
-        distance: (distance / 1000).toFixed(2),
-        avgSpeed: "12.5",
+        date: dateStr,
+        distance: distKm,
+        avgSpeed: calculatedAvgSpeed,
       };
-      set({ history: [newSession, ...history] });
+
+      set({
+        history: [newSession, ...history],
+        startTime: null,
+        distance: 0,
+        route: [],
+      });
     }
   },
 
-  updateLocation: (lat, lon) => {
+  updateLocation: (lat, lon, currentSpeed = 0) => {
     const { isRecording, prevCoords, distance, route } = get();
     if (!isRecording) return;
 
+    const speedInKmH = Math.max(0, currentSpeed * 3.6);
     const newCoord = { latitude: lat, longitude: lon };
 
     if (prevCoords) {
@@ -63,13 +98,17 @@ export const useTrackingStore = create<TrackingState>((set, get) => ({
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const newDistance = R * c;
 
+      const validDistance = newDistance > 0.5 ? newDistance : 0;
+
       set({
-        distance: distance + newDistance,
+        speed: speedInKmH,
+        distance: distance + validDistance,
         route: [...route, newCoord],
         prevCoords: newCoord,
       });
     } else {
       set({
+        speed: speedInKmH,
         prevCoords: newCoord,
         route: [newCoord],
       });

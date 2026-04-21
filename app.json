@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "plugins": [
       [
         "expo-camera",
@@ -25,7 +27,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow TrackCast to use your location for speed tracking."
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "android": {
       "package": "com.azizbek.trackcast",
