@@ -8,62 +8,60 @@
 
 The primary goal is to build a stable Minimum Viable Product (MVP) that records essential trip data with a clean, high-performance UI.
 
-- **Activity Recording**: Precise tracking for high-velocity sports including driving, walking, and skiing.
-- **Dynamic Speedometer**: Live speed visualization using `React Native Reanimated` for 60fps smoothness.
-- **Live Map Path**: Real-time breadcrumb trail (polyline) mapping using `react-native-maps`.
-- **Telemetry Overlay**: Professional channel branding and data overlays for content creators.
-- **Data Persistence**: Local session storage including duration, distance, and peak/average speeds.
+- **Activity Recording** — Precise tracking for high-velocity sports including driving, walking, and skiing.
+- **Dynamic Speedometer** — Live speed visualization using `React Native Reanimated` for 60fps smoothness.
+- **Live Map Path** — Real-time breadcrumb trail (polyline) mapping using `react-native-maps`.
+- **Telemetry Overlay** — Professional channel branding and data overlays for content creators.
+- **Data Persistence** — Local session storage including duration, distance, and peak/average speeds.
 
 ---
 
 ## 🛠️ Technical Stack
 
-- **Core**: React Native (Expo) + TypeScript for type-safe development.
-- **Navigation**: Expo Router or React Navigation for seamless transitions.
-- **Location Engine**: `expo-location` and `expo-task-manager` for precise coordinate polling.
-- **Database**: `expo-sqlite` for high-performance local data relational storage.
+| Layer | Technology |
+|---|---|
+| Core | React Native (Expo) + TypeScript |
+| Navigation | Expo Router / React Navigation |
+| Location Engine | `expo-location` + `expo-task-manager` |
+| Database | `expo-sqlite` |
+| Animations | `React Native Reanimated` |
+| Maps | `react-native-maps` |
 
 ---
 
-## 📂 Architecture & Roadmap
-
-### Project Structure
+## 📂 Architecture
 
 ```text
 /src
- /components        # UI elements: Speedometer, MapView, ChannelLogo
- /features          # Logic: useLocationTracker.ts, trackingStore.ts
- /screens           # Pages: Home, Recording, History
- /utils             # Auxiliary functions: Speed ​​formatting, Geo-logic
+ ├── /components        # UI elements: Speedometer, MapView, ChannelLogo
+ ├── /features          # Logic: useLocationTracker.ts, trackingStore.ts
+ ├── /screens           # Pages: Home, Recording, History
+ └── /utils             # Auxiliary functions: Speed formatting, Geo-logic
 ```
 
 ---
 
-### 🗺️ Development Roadmap & Strategy
+## 🗺️ Development Roadmap
 
-#### ✅ PHASE 1–2: PROJECT SETUP & CORE GPS
+### ✅ PHASE 1–2: Project Setup & Core GPS
+- [x] Initialize Expo with TypeScript template
+- [x] Implement GPS subscription and real-time speed polling
+- **Goal:** Speed updates live and works while moving
 
-- Initialize Expo with TypeScript template.
-- Implement GPS subscription and real-time speed polling.
-- **Goal:** Speed updates live and works while moving.
+### ✅ PHASE 3–4: Maps & Speedometer UI
+- [x] Integration of `react-native-maps` with Polyline path rendering
+- [x] Big numeric speed display with unit toggle (km/h / mph)
+- [x] Needle animations and smooth gauge transitions
 
-#### ✅ PHASE 3–4: MAPS & SPEEDOMETER UI
+### ✅ PHASE 5–6: Session Recording & Overlays
+- [x] SQLite integration for trip history (distance, duration, max speed)
+- [x] Overlay system — Channel logo + Speedometer
+- [x] Responsive Landscape mode support
 
-- Integration of `react-native-maps` with Polyline path rendering.
-- Design of big numeric speed display and unit toggle (km/h / mph).
-- Implementation of needle animations and smooth gauge transitions.
-
-#### ✅ PHASE 5–6: SESSION RECORDING & OVERLAYS
-
-- SQLite integration for storing trip history (distance, duration, max speed).
-- Implementation of the Overlay system (Channel logo + Speedometer).
-- Responsive layout support for Landscape mode.
-
-#### 🔮 PHASE 7+: ADVANCED FEATURES (POST-MVP)
-
-- Background tracking and battery optimization via `expo-task-manager`.
-- Video capture synchronization with GPS data.
-- YouTube Data API integration for automated uploads.
+### 🔮 PHASE 7+: Advanced Features *(Post-MVP)*
+- [ ] Background tracking and battery optimization via `expo-task-manager`
+- [ ] Video capture synchronization with GPS data
+- [ ] YouTube Data API integration for automated uploads
 
 ---
 
@@ -72,7 +70,7 @@ The primary goal is to build a stable Minimum Viable Product (MVP) that records 
 This project is a collaboration between **Maciej Drahusz** (Founder of "Code & Hustle" channel) and **Azizbek Abdullayev**.
 
 | Role | Name | GitHub |
-|------|------|--------|
+|---|---|---|
 | Collaborator (Founder) | Maciej Drahusz | [@mrMagic-web](https://github.com/mrMagic-web) |
 | Lead Developer | Azizbek Abdullayev | [@Azizbek432](https://github.com/Azizbek432) |
 
@@ -80,17 +78,19 @@ This project is a collaboration between **Maciej Drahusz** (Founder of "Code & H
 
 ## 🎯 Strategic Objectives
 
-- **Sustainability:** Delaying livestreaming functionality, which is risky for junior developers, to focus on a stable MVP.
-- **Data Cleanliness:** Implement GPS jitter (noise) filters.
-- **Battery Savings:** Background tracking will only be added in Phase 7.
+- **Sustainability** — Delaying livestreaming functionality, which is risky for junior developers, to focus on a stable MVP.
+- **Data Cleanliness** — Implement GPS jitter (noise) filters.
+- **Battery Savings** — Background tracking will only be added in Phase 7.
 
 ---
 
-## ⚠️ Technical risks
+## ⚠️ Technical Risks
 
-- **Background Location:** Android/iOS battery limitations (High complexity).
-- **Video Sync:** Synchronizing video with GPS coordinates challenges.
-- **Map Performance:** Optimization of multipoint polylines.
+- **Background Location** — Android/iOS battery limitations (High complexity).
+- **Video Sync** — Synchronizing video with GPS coordinates challenges.
+- **Map Performance** — Optimization of multipoint polylines.
+
+---
 
 <details>
 <summary>🇺🇿 O'zbekcha versiya</summary>
@@ -105,62 +105,60 @@ This project is a collaboration between **Maciej Drahusz** (Founder of "Code & H
 
 Asosiy maqsad — toza va yuqori samarali UI bilan muhim sayohat ma'lumotlarini yozib oladigan barqaror Minimal Ishlaydigan Mahsulot (MVP) yaratish.
 
-- **Faoliyat Yozish**: Haydash, piyoda yurish va chang'i uchish kabi yuqori tezlikdagi sportlar uchun aniq kuzatuv.
-- **Dinamik Tezlik O'lchagich**: `React Native Reanimated` yordamida 60fps silliqligida jonli tezlik vizualizatsiyasi.
-- **Jonli Xarita Yo'li**: `react-native-maps` yordamida real vaqt rejimida non izlari (polyline) xaritalash.
-- **Telemetriya Overlay**: Kontent yaratuvchilar uchun professional kanal brendingi va ma'lumot overlaylari.
-- **Ma'lumotlarni Saqlash**: Davomiylik, masofa va eng yuqori/o'rtacha tezliklarni o'z ichiga olgan mahalliy sessiya xotirasi.
+- **Faoliyat Yozish** — Haydash, piyoda yurish va chang'i uchish kabi yuqori tezlikdagi sportlar uchun aniq kuzatuv.
+- **Dinamik Tezlik O'lchagich** — `React Native Reanimated` yordamida 60fps silliqligida jonli tezlik vizualizatsiyasi.
+- **Jonli Xarita Yo'li** — `react-native-maps` yordamida real vaqt rejimida non izlari (polyline) xaritalash.
+- **Telemetriya Overlay** — Kontent yaratuvchilar uchun professional kanal brendingi va ma'lumot overlaylari.
+- **Ma'lumotlarni Saqlash** — Davomiylik, masofa va eng yuqori/o'rtacha tezliklarni o'z ichiga olgan mahalliy sessiya xotirasi.
 
 ---
 
 ## 🛠️ Texnik Stack
 
-- **Asos**: Xavfsiz ishlab chiqish uchun React Native (Expo) + TypeScript.
-- **Navigatsiya**: Muammosiz o'tishlar uchun Expo Router yoki React Navigation.
-- **Joylashuv Mexanizmi**: Aniq koordinata so'rovi uchun `expo-location` va `expo-task-manager`.
-- **Ma'lumotlar Bazasi**: Yuqori samarali mahalliy relyatsion saqlash uchun `expo-sqlite`.
+| Qatlam | Texnologiya |
+|---|---|
+| Asos | React Native (Expo) + TypeScript |
+| Navigatsiya | Expo Router / React Navigation |
+| Joylashuv Mexanizmi | `expo-location` + `expo-task-manager` |
+| Ma'lumotlar Bazasi | `expo-sqlite` |
+| Animatsiyalar | `React Native Reanimated` |
+| Xaritalar | `react-native-maps` |
 
 ---
 
-## 📂 Arxitektura va Yo'l Xaritasi
-
-### Loyiha Tuzilmasi
+## 📂 Arxitektura
 
 ```text
 /src
-  /components      # UI elementlar: Speedometer, MapView, ChannelLogo
-  /features        # Mantiq: useLocationTracker.ts, trackingStore.ts
-  /screens         # Sahifalar: Home, Recording, History
-  /utils           # Yordamchi funksiyalar: Speed formatting, Geo-logic
+ ├── /components      # UI elementlar: Speedometer, MapView, ChannelLogo
+ ├── /features        # Mantiq: useLocationTracker.ts, trackingStore.ts
+ ├── /screens         # Sahifalar: Home, Recording, History
+ └── /utils           # Yordamchi funksiyalar: Speed formatting, Geo-logic
 ```
 
 ---
 
-### 🗺️ Rivojlantirish Yo'l Xaritasi va Strategiya
+## 🗺️ Rivojlantirish Yo'l Xaritasi
 
-#### ✅ BOSQICH 1–2: LOYIHANI SOZLASH VA ASOSIY GPS
+### ✅ BOSQICH 1–2: Loyihani Sozlash va Asosiy GPS
+- [x] Expo'ni TypeScript shabloni bilan ishga tushirish
+- [x] GPS obunasi va real vaqt tezlik so'rovini amalga oshirish
+- **Maqsad:** Tezlik jonli yangilanadi va harakat paytida ishlaydi
 
-- Expo'ni TypeScript shabloni bilan ishga tushirish.
-- GPS obunasi va real vaqt tezlik so'rovini amalga oshirish.
-- **Maqsad:** Tezlik jonli yangilanadi va harakat paytida ishlaydi.
+### ✅ BOSQICH 3–4: Xarita va Tezlik O'lchagich UI
+- [x] `react-native-maps` ni Polyline yo'l ko'rsatish bilan integratsiyalash
+- [x] Katta raqamli tezlik ko'rsatgichi va birlik almashtirish (km/soat / mil/soat)
+- [x] Igna animatsiyalari va silliq o'lchagich o'tishlari
 
-#### ✅ BOSQICH 3–4: XARITA VA TEZLIK O'LCHAGICH UI
+### ✅ BOSQICH 5–6: Sessiyani Yozish va Overlaylar
+- [x] Sayohat tarixini saqlash uchun SQLite integratsiyasi (masofa, davomiylik, maks. tezlik)
+- [x] Overlay tizimi — Kanal logotipi + Tezlik o'lchagich
+- [x] Landscape rejimi uchun moslashuvchan tartib
 
-- `react-native-maps` ni Polyline yo'l ko'rsatish bilan integratsiyalash.
-- Katta raqamli tezlik ko'rsatgichi va birlik almashtirish (km/soat / mil/soat) dizayni.
-- Igna animatsiyalari va silliq o'lchagich o'tishlarini amalga oshirish.
-
-#### ✅ BOSQICH 5–6: SESSIYANI YOZISH VA OVERLAYLAR
-
-- Sayohat tarixini saqlash uchun SQLite integratsiyasi (masofa, davomiylik, maksimal tezlik).
-- Overlay tizimini amalga oshirish (Kanal logotipi + Tezlik o'lchagich).
-- Landscape rejimi uchun moslashuvchan tartib qo'llab-quvvatlash.
-
-#### 🔮 BOSQICH 7+: KENGAYTIRILGAN FUNKSIYALAR (MVP DAN KEYIN)
-
-- `expo-task-manager` orqali fon kuzatuvi va batareya optimizatsiyasi.
-- GPS ma'lumotlari bilan video yozishni sinxronlash.
-- Avtomatlashtirilgan yuklashlar uchun YouTube Data API integratsiyasi.
+### 🔮 BOSQICH 7+: Kengaytirilgan Funksiyalar *(MVP dan keyin)*
+- [ ] `expo-task-manager` orqali fon kuzatuvi va batareya optimizatsiyasi
+- [ ] GPS ma'lumotlari bilan video yozishni sinxronlash
+- [ ] Avtomatlashtirilgan yuklashlar uchun YouTube Data API integratsiyasi
 
 ---
 
@@ -169,24 +167,24 @@ Asosiy maqsad — toza va yuqori samarali UI bilan muhim sayohat ma'lumotlarini 
 Bu loyiha **Maciej Drahusz** ("Code & Hustle" kanali asoschisi) va **Azizbek Abdullayev** o'rtasidagi hamkorlikdir.
 
 | Rol | Ism | GitHub |
-|-----|-----|--------|
+|---|---|---|
 | Hamkorchi (Asoschi) | Maciej Drahusz | [@mrMagic-web](https://github.com/mrMagic-web) |
-| Bosh Dasturchi | Azizbek Abdullayev | — |
+| Bosh Dasturchi | Azizbek Abdullayev | [@Azizbek432](https://github.com/Azizbek432) |
 
 ---
 
 ## 🎯 Strategik Maqsadlar
 
-- **Barqarorlik:** Junior dasturchilar uchun xavfli bo'lgan livestreaming funksiyasini kechiktirish, asosiy e'tiborni barqaror MVPga qaratish.
-- **Ma'lumotlar Tozaligi:** GPS jitter (shovqin) filtrlarini qo'llash.
-- **Batareya Tejamkorligi:** Background tracking faqat Phase 7da qo'shiladi.
+- **Barqarorlik** — Junior dasturchilar uchun xavfli bo'lgan livestreaming funksiyasini kechiktirish, asosiy e'tiborni barqaror MVPga qaratish.
+- **Ma'lumotlar Tozaligi** — GPS jitter (shovqin) filtrlarini qo'llash.
+- **Batareya Tejamkorligi** — Background tracking faqat Phase 7da qo'shiladi.
 
 ---
 
 ## ⚠️ Texnik Risklar
 
-- **Background Location:** Android/iOS batareya cheklovlari (Yuqori murakkablik).
-- **Video Sync:** Videoni GPS koordinatalari bilan sinxronlash challenges.
-- **Map Performance:** Ko'p nuqtali polylinelarni optimizatsiya qilish.
+- **Background Location** — Android/iOS batareya cheklovlari (Yuqori murakkablik).
+- **Video Sync** — Videoni GPS koordinatalari bilan sinxronlash muammolari.
+- **Map Performance** — Ko'p nuqtali polylinelarni optimizatsiya qilish.
 
 </details>
