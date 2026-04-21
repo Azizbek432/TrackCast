@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useLocationTracker } from "../features/tracking/useLocationTracker";
 import { useTrackingStore } from "../features/tracking/trackingStore";
 import { Loader } from "../components/Loader";
 import { MapComponent } from "../components/MapComponent";
 
 export const HomeScreen = () => {
+  const [permission, requestPermission] = useCameraPermissions();
   const { location, errorMsg } = useLocationTracker();
   const {
     updateLocation,
@@ -21,7 +23,6 @@ export const HomeScreen = () => {
     startRecording,
     stopRecording,
   } = useTrackingStore();
-
   const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
@@ -30,84 +31,102 @@ export const HomeScreen = () => {
     }
   }, [location, isRecording]);
 
-  if (!location && !errorMsg) {
-    return <Loader />;
-  }
+  if (!location && !errorMsg) return <Loader />;
+  if (!permission) return <View />;
 
-  const speedMs = location?.coords.speed ?? 0;
-  const speedKmh = Math.max(0, speedMs * 3.6).toFixed(1);
+  const speedKmh = Math.max(0, (location?.coords.speed ?? 0) * 3.6).toFixed(1);
+
+  const handleRecordPress = async () => {
+    if (!isRecording) {
+      const { status } = await requestPermission();
+      if (status === "granted") startRecording();
+    } else {
+      stopRecording();
+    }
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.header}>
-        <Text style={styles.brand}>{showMap ? "MAP VIEW" : "TRACKCAST"}</Text>
-        <Image
-          source={require("../../assets/TrackCast_logo.png")}
-          style={styles.logoIcon}
-        />
+
+      <View style={StyleSheet.absoluteFill}>
+        {isRecording && permission.granted ? (
+          <CameraView style={StyleSheet.absoluteFill} facing="back" />
+        ) : showMap ? (
+          <MapComponent location={location} />
+        ) : (
+          <View style={styles.darkBg} />
+        )}
       </View>
-      {errorMsg ? (
-        <Text style={styles.errorText}>{errorMsg}</Text>
-      ) : (
-        <View style={styles.mainVisual}>
-          {showMap ? (
-            <MapComponent location={location} />
-          ) : (
-            <>
-              <Image
-                source={require("../../assets/speedometer.png")}
-                style={[styles.speedBg, { opacity: 0.2 }]}
-              />
-              <View style={styles.speedTextContainer}>
-                <Text style={styles.speedValue}>{speedKmh}</Text>
-                <Text style={styles.unit}>km/h</Text>
-              </View>
 
-              <View style={styles.distanceContainer}>
-                <Text style={styles.distanceLabel}>DISTANCE</Text>
-                <Text style={styles.distanceValue}>
-                  {(distance / 1000).toFixed(2)}{" "}
-                  <Text style={styles.distUnit}>km</Text>
-                </Text>
-              </View>
-            </>
-          )}
+      <View style={styles.overlay}>
+        <View style={styles.header}>
+          <Text style={styles.brand}>
+            {isRecording ? "LIVE TRACKING" : "TRACKCAST"}
+          </Text>
+          <Image
+            source={require("../../assets/TrackCast_logo.png")}
+            style={styles.logoIcon}
+          />
         </View>
-      )}
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.mapBtn, showMap && { backgroundColor: "#00ff00" }]}
-          onPress={() => setShowMap(!showMap)}
-        >
-          <Image
-            source={require("../../assets/location-pin.png")}
-            style={[styles.smallIcon, showMap && { tintColor: "#000" }]}
-          />
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.recordBtn, isRecording && styles.recordingActive]}
-          onPress={isRecording ? stopRecording : startRecording}
-        >
-          <Image
-            source={require("../../assets/circle.png")}
-            style={[styles.recIcon, isRecording && { tintColor: "#ff0000" }]}
-          />
-        </TouchableOpacity>
+        <View style={styles.mainVisual}>
+          <View style={styles.speedTextContainer}>
+            <Text
+              style={[styles.speedValue, isRecording && styles.arTextShadow]}
+            >
+              {speedKmh}
+            </Text>
+            <Text style={styles.unit}>km/h</Text>
+          </View>
 
-        <View style={styles.placeholder} />
+          <View style={styles.distanceContainer}>
+            <Text style={styles.distanceLabel}>DISTANCE</Text>
+            <Text style={styles.distanceValue}>
+              {(distance / 1000).toFixed(2)}{" "}
+              <Text style={styles.distUnit}>km</Text>
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.mapBtn, showMap && { backgroundColor: "#00ff00" }]}
+            onPress={() => setShowMap(!showMap)}
+          >
+            <Image
+              source={require("../../assets/location-pin.png")}
+              style={[styles.smallIcon, showMap && { tintColor: "#000" }]}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.recordBtn, isRecording && styles.recordingActive]}
+            onPress={handleRecordPress}
+          >
+            <View
+              style={[
+                styles.recCircle,
+                isRecording && { backgroundColor: "#ff0000", borderRadius: 5 },
+              ]}
+            />
+          </TouchableOpacity>
+
+          <View style={styles.placeholder} />
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1, backgroundColor: "#000" },
+  darkBg: { flex: 1, backgroundColor: "#000" },
+  overlay: {
     flex: 1,
-    backgroundColor: "#000",
     paddingHorizontal: 25,
     paddingTop: 50,
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
   header: {
     flexDirection: "row",
@@ -115,109 +134,53 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  brand: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "900",
-    letterSpacing: 2,
-  },
-  logoIcon: {
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    resizeMode: "contain",
-  },
-  mainVisual: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 20,
-    width: "100%",
-  },
-  speedBg: {
-    position: "absolute",
-    width: 320,
-    height: 320,
-  },
-  speedTextContainer: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  speedValue: {
-    color: "#fff",
-    fontSize: 110,
-    fontWeight: "bold",
-  },
-  unit: {
-    color: "#00ff00",
-    fontSize: 22,
-    fontWeight: "bold",
-    marginTop: -15,
-  },
+  brand: { color: "#fff", fontSize: 22, fontWeight: "900", letterSpacing: 2 },
+  logoIcon: { width: 45, height: 45, borderRadius: 12 },
+  mainVisual: { flex: 1, alignItems: "center", justifyContent: "center" },
+  speedTextContainer: { alignItems: "center", marginBottom: 40 },
+  speedValue: { color: "#fff", fontSize: 110, fontWeight: "bold" },
+  arTextShadow: { textShadowColor: "#00ff00", textShadowRadius: 20 },
+  unit: { color: "#00ff00", fontSize: 22, fontWeight: "bold", marginTop: -15 },
   distanceContainer: {
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.05)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     paddingVertical: 10,
     paddingHorizontal: 30,
-    borderRadius: 15,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
   distanceLabel: {
-    color: "#666",
+    color: "#aaa",
     fontSize: 12,
     letterSpacing: 2,
     marginBottom: 5,
   },
-  distanceValue: {
-    color: "#fff",
-    fontSize: 32,
-    fontWeight: "600",
-  },
-  distUnit: {
-    fontSize: 16,
-    color: "#00ff00",
-  },
+  distanceValue: { color: "#fff", fontSize: 32, fontWeight: "600" },
+  distUnit: { fontSize: 16, color: "#00ff00" },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 40,
   },
-  mapBtn: {
-    backgroundColor: "#1A1A1A",
-    padding: 15,
-    borderRadius: 20,
-  },
-  smallIcon: {
-    width: 30,
-    height: 30,
-  },
+  mapBtn: { backgroundColor: "#1A1A1A", padding: 18, borderRadius: 25 },
+  smallIcon: { width: 25, height: 25 },
   recordBtn: {
     backgroundColor: "#fff",
-    width: 85,
-    height: 85,
-    borderRadius: 45,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 5,
-    shadowColor: "#00ff00",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
+    elevation: 10,
   },
-  recordingActive: {
-    borderColor: "#ff0000",
-    borderWidth: 2,
+  recordingActive: { borderWidth: 4, borderColor: "#ff0000" },
+  recCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#000",
   },
-  recIcon: {
-    width: 60,
-    height: 60,
-  },
-  placeholder: {
-    width: 60,
-  },
-  errorText: {
-    color: "#ff4444",
-    textAlign: "center",
-    marginTop: 50,
-    fontSize: 16,
-  },
+  placeholder: { width: 60 },
 });

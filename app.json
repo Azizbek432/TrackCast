@@ -12,13 +12,16 @@
       "backgroundColor": "#000000"
     },
     "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "package": "com.azizbek.trackcast",
       "versionCode": 1,
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA",
+        "FOREGROUND_SERVICE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/TrackCast_logo.png",
         "backgroundColor": "#000000"
@@ -28,9 +31,6 @@
           "apiKey": ""
         }
       }
-    },
-    "web": {
-      "favicon": "./assets/TrackCast_logo.png"
     },
     "extra": {
       "eas": {
