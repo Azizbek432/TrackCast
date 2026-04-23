@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { HistoryScreen } from "./src/screens/HistoryScreen";
+import { initializeDatabase } from "./src/database/db";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  useEffect(() => {
+    initializeDatabase();
+  }, []);
+
   return (
     <NavigationContainer>
       <Tab.Navigator

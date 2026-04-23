@@ -2,22 +2,21 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabaseSync("trackcast.db");
 
-export const initDatabase = () => {
+export const initializeDatabase = () => {
   try {
     db.execSync(`
+      PRAGMA journal_mode = WAL;
       CREATE TABLE IF NOT EXISTS trips (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT DEFAULT (datetime('now','localtime')),
-        distance REAL,      -- metrda
-        avgSpeed REAL,      -- km/h
-        maxSpeed REAL,      -- km/h
-        duration INTEGER,   -- sekundda
-        path TEXT           -- koordinatalar JSON string ko'rinishida
+        date TEXT NOT NULL,
+        distance REAL NOT NULL,
+        maxSpeed REAL NOT NULL,
+        duration INTEGER DEFAULT 0
       );
     `);
-    console.log("Database initialized ✅");
+    console.log("Database initialized successfully");
   } catch (error) {
-    console.error("DB Init Error: ", error);
+    console.error("Database initialization failed:", error);
   }
 };
 
