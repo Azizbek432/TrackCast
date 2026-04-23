@@ -3,6 +3,9 @@ import * as Location from "expo-location";
 import { useTrackingStore } from "./trackingStore";
 
 export const useLocationTracker = () => {
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null,
+  );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { isRecording, updateLocation } = useTrackingStore();
 
@@ -23,6 +26,8 @@ export const useLocationTracker = () => {
           distanceInterval: 1,
         },
         (newLocation) => {
+          setLocation(newLocation);
+
           if (isRecording) {
             updateLocation(
               newLocation.coords.latitude,
@@ -39,7 +44,7 @@ export const useLocationTracker = () => {
         subscription.remove();
       }
     };
-  }, [isRecording]);
+  }, [isRecording, updateLocation]);
 
-  return { errorMsg };
+  return { location, errorMsg };
 };
