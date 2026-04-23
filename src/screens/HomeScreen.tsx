@@ -56,9 +56,9 @@ export const HomeScreen = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <View style={StyleSheet.absoluteFill}>
+      <View style={styles.backgroundLayer}>
         {isRecording && permission.granted ? (
-          <CameraView style={StyleSheet.absoluteFill} facing="back" />
+          <CameraView style={styles.absoluteView} facing="back" />
         ) : showMap && location ? (
           <MapComponent location={location} />
         ) : (
@@ -130,13 +130,27 @@ export const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
-  darkBg: { flex: 1, backgroundColor: "#000" },
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+  },
+  backgroundLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: -1,
+  },
+  absoluteView: {
+    flex: 1,
+  },
+  darkBg: {
+    flex: 1,
+    backgroundColor: "#000",
+  },
   overlay: {
     flex: 1,
     paddingHorizontal: 25,
     paddingTop: 50,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    paddingBottom: 90,
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
   header: {
     flexDirection: "row",
@@ -159,8 +173,15 @@ const styles = StyleSheet.create({
     height: "90%",
     resizeMode: "contain",
   },
-  mainVisual: { flex: 1, alignItems: "center", justifyContent: "center" },
-  speedTextContainer: { alignItems: "center", marginBottom: 40 },
+  mainVisual: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  speedTextContainer: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
   speedValue: { color: "#fff", fontSize: 110, fontWeight: "bold" },
   arTextShadow: { textShadowColor: "#00ff00", textShadowRadius: 20 },
   unit: { color: "#00ff00", fontSize: 22, fontWeight: "bold", marginTop: -15 },
@@ -185,7 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: 10,
   },
   mapBtn: { backgroundColor: "#1A1A1A", padding: 18, borderRadius: 25 },
   smallIcon: { width: 25, height: 25 },
