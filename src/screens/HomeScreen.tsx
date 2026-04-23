@@ -25,14 +25,26 @@ export const HomeScreen = () => {
   } = useTrackingStore();
   const [showMap, setShowMap] = useState(false);
 
+  // 1. Komponent yuklanganda ruxsatnomalarni tekshirish va so'rash
+  useEffect(() => {
+    (async () => {
+      if (!permission || !permission.granted) {
+        await requestPermission();
+      }
+    })();
+  }, []);
+
+  // 2. Tracking mantiqi
   useEffect(() => {
     if (location?.coords && isRecording) {
       updateLocation(location.coords.latitude, location.coords.longitude);
     }
   }, [location, isRecording]);
 
+  // Yuklanish holati (permission hali kelmagan bo'lsa)
   if (!permission) return <View style={styles.container} />;
 
+  // Location kelguncha Loader ko'rsatish
   if (!location && !errorMsg) return <Loader />;
 
   const speedKmh = location?.coords?.speed
@@ -41,6 +53,7 @@ export const HomeScreen = () => {
 
   const handleRecordPress = async () => {
     if (!isRecording) {
+      // Ruxsatnoma tekshiruvi (xavfsizlik uchun)
       if (!permission.granted) {
         const { status } = await requestPermission();
         if (status !== "granted") return;
@@ -56,9 +69,16 @@ export const HomeScreen = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
+      {/* BACKGROUND LAYER: Kamera yoki Xarita */}
       <View style={styles.backgroundLayer}>
+        {/* isRecording TRUE bo'lganda kamera ochilishi shart */}
         {isRecording && permission.granted ? (
-          <CameraView style={styles.absoluteView} facing="back" />
+          <CameraView
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            // Ba'zan kamera "freeze" bo'lib qolmasligi uchun
+            onCameraReady={() => console.log("Camera Ready")}
+          />
         ) : showMap && location ? (
           <MapComponent location={location} />
         ) : (
@@ -130,21 +150,12 @@ export const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
+  container: { flex: 1, backgroundColor: "#000" },
   backgroundLayer: {
     ...StyleSheet.absoluteFillObject,
     zIndex: -1,
   },
-  absoluteView: {
-    flex: 1,
-  },
-  darkBg: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
+  darkBg: { flex: 1, backgroundColor: "#000" },
   overlay: {
     flex: 1,
     paddingHorizontal: 25,
@@ -168,20 +179,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
   },
-  logoIcon: {
-    width: "90%",
-    height: "90%",
-    resizeMode: "contain",
-  },
-  mainVisual: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  speedTextContainer: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
+  logoIcon: { width: "90%", height: "90%", resizeMode: "contain" },
+  mainVisual: { flex: 1, alignItems: "center", justifyContent: "center" },
+  speedTextContainer: { alignItems: "center", marginBottom: 40 },
   speedValue: { color: "#fff", fontSize: 110, fontWeight: "bold" },
   arTextShadow: { textShadowColor: "#00ff00", textShadowRadius: 20 },
   unit: { color: "#00ff00", fontSize: 22, fontWeight: "bold", marginTop: -15 },

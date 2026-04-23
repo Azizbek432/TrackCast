@@ -2,9 +2,9 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabaseSync("trackcast.db");
 
-export const initializeDatabase = () => {
+export const initializeDatabase = async () => {
   try {
-    db.execSync(`
+    await db.execAsync(`
       PRAGMA journal_mode = WAL;
       CREATE TABLE IF NOT EXISTS trips (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -14,9 +14,9 @@ export const initializeDatabase = () => {
         duration INTEGER DEFAULT 0
       );
     `);
-    console.log("Database initialized successfully");
+    console.log("Database initialized");
   } catch (error) {
-    console.error("Database initialization failed:", error);
+    console.log("Database init error:", error);
   }
 };
 

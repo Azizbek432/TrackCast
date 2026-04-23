@@ -10,7 +10,10 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   useEffect(() => {
-    initializeDatabase();
+    const init = async () => {
+      await initializeDatabase();
+    };
+    init();
   }, []);
 
   return (
