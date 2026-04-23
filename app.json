@@ -28,7 +28,8 @@
           "locationAlwaysAndWhenInUsePermission": "Allow TrackCast to use your location for speed tracking."
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-font"
     ],
     "android": {
       "package": "com.azizbek.trackcast",

@@ -6,12 +6,17 @@ export const HistoryScreen = () => {
   const [trips, setTrips] = useState<any[]>([]);
 
   useEffect(() => {
-    try {
-      const data = db.getAllSync("SELECT * FROM trips ORDER BY id DESC");
-      setTrips(data || []);
-    } catch (error) {
-      console.log("Database error:", error);
-    }
+    const loadData = async () => {
+      try {
+        const data = await db.getAllAsync(
+          "SELECT * FROM trips ORDER BY id DESC",
+        );
+        setTrips(data || []);
+      } catch (error) {
+        console.log("Database hali tayyor emas yoki bo'sh:", error);
+      }
+    };
+    loadData();
   }, []);
 
   return (
