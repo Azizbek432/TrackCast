@@ -26,26 +26,21 @@ export const HomeScreen = () => {
   const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
-    // location mavjudligini va isRecording holatini tekshiramiz
     if (location?.coords && isRecording) {
       updateLocation(location.coords.latitude, location.coords.longitude);
     }
   }, [location, isRecording]);
 
-  // Agar ruxsatlar hali so'ralmagan bo'lsa
   if (!permission) return <View style={styles.container} />;
 
-  // Loader faqat location va errorMsg bo'lmagandagina chiqishi kerak
   if (!location && !errorMsg) return <Loader />;
 
-  // Tezlikni xavfsiz hisoblash
   const speedKmh = location?.coords?.speed
     ? Math.max(0, location.coords.speed * 3.6).toFixed(1)
     : "0.0";
 
   const handleRecordPress = async () => {
     if (!isRecording) {
-      // Kamera ruxsatini tekshirish
       if (!permission.granted) {
         const { status } = await requestPermission();
         if (status !== "granted") return;
@@ -53,7 +48,6 @@ export const HomeScreen = () => {
       startRecording();
     } else {
       stopRecording();
-      // Sessiyani saqlash
       useTrackingStore.getState().saveSession();
     }
   };
@@ -80,8 +74,7 @@ export const HomeScreen = () => {
 
           <View style={styles.logoContainer}>
             <Image
-              // assets papkangizdagi logo nomi bilan bir xil ekanligini tekshiring
-              source={require("../../assets/logo.png")}
+              source={require("../../assets/TrackCast_logo.png")}
               style={styles.logoIcon}
             />
           </View>
